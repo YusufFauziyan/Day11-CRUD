@@ -97,7 +97,7 @@ app.get('/delete-project/:id', (req, res) => {
     })
 })
 
-//UPDATE GET DATA
+// GET DATA for update
 app.get ('/update-project/:id', (req, res) =>{
 
     let id =  req.params.id
@@ -109,7 +109,10 @@ app.get ('/update-project/:id', (req, res) =>{
             if (err) throw err
             done()
             let data = result.rows[0]
-            // console.log(data);
+            data.startDate = getFullTime(data.sDate)
+            data.endDate = getFullTime(data.eDate)
+
+            console.log(data);
             res.render('update-project', {update: data, id})
         })
     })
@@ -176,12 +179,13 @@ function abtDuration(startDate, endDate) {
 
 function getFullTime(waktu) {
     
-    let month = ['Januari', 'Febuari', 'March', 'April', 'May', 'June', 'July', 'August', 'Sept', 'October', 'December']
+    let month = ['January', 'Febuary', 'March', 'April', 'May', 'June', 'July', 'August', 'Sept', 'October', 'December']
     
-    let date = waktu.getDate()
-    // console.log(date);
+    let date = waktu.getDate().toString().padStart(2, "0");
 
-    let monthIndex = waktu.getMonth()
+    // console.log(date);
+    let monthIndex = (waktu.getMonth() + 1).toString().padStart(2, "0")
+
     // console.log(month[monthIndex]);
 
     let year = waktu.getFullYear()
@@ -190,10 +194,21 @@ function getFullTime(waktu) {
     let hours = waktu.getHours()
     let minutes = waktu.getMinutes()
 
-    let fullTime = `${date} ${month[monthIndex]} ${year}`
+    let fullTime = `${year}-${monthIndex}-${date}`
     return fullTime
 }
 
+// function startdate(sDate){
+//     let startdate = new Date(sDate);
+//     const result = startdate.toLocaleDateString("en-GB", {
+//       day: "2-digit",
+//       month: "2-digit",
+//       year: "numeric",
+//     });
+//     let result_split = result.split("/");
+//     let final_result = `${result_split[2]}-${result_split[1]}-${result_split[0]}`;
+//     return final_result;
+// }
 
 app.listen(port, () =>{
     console.log(`Server listen at http://localhost: ${port}`)
